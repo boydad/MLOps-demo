@@ -12,8 +12,8 @@ from torch.optim.lr_scheduler import StepLR
 ex = Experiment('exp8', save_git_info=False)
 from sacred.observers import MongoObserver
 ex.observers.append(MongoObserver.create(
-    url=f'mongodb://flow:canwemlgenerateqcd@mongo-server/ml_generation_qcd', db_name='ml_generation_qcd'))
-wandb.init(project="demo", entity="alcf-datascience")
+    url=f'mongodb://mongo_user:mongo_password@mongo/sacred', db_name='sacred'))
+wandb.init(project="demo", entity="alcf-datascience", name='exp8')
 
 
 @ex.config
@@ -154,16 +154,16 @@ def train(_run, _seed, _config):
         print(f'Train Epoch: {epoch}')        
         loss = train_epoch(model, train_loader, optimizer, epoch, _config['log_interval'], _run)
         _run.log_scalar('train.loss', loss, epoch)
-        wandb.log('train.loss', loss)
+        wandb.log({'train.loss': loss})
 
         scheduler.step()
         loss = test_epoch(model, test_loader, epoch, _run)
         _run.log_scalar('test.loss', loss, epoch)
-        wandb.log('test.loss', loss)
+        wandb.log({'test.loss': loss})
 
         wandb.watch(model)
         if _config['model_path'] is not None:
             fname = _config['model_path'] + f'/model_epoch{epoch}.pt'
             torch.save(model.state_dict(), fname)
-            _run.add_artifact(fname, name=f'/model_epoch{epoch}.pt', content_type="application/octet-stream")
-            wandb.log_artifact(fname, name=f'/model_epoch{epoch}.pt', type="application/octet-stream")
+            _run.add_artifact(fname, name=f'model_epoch{epoch}.pt', content_type="application/octet-stream")
+            wandb.log_artifact(fname, name=f'model_epoch{epoch}.pt', type="application-octet-stream")
