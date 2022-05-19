@@ -6,10 +6,10 @@ For testing sacred + omniboard two containers are prepared. Container [mongo](ht
 ```
 docker run -dp 27017:27017 \
  -v $PWD/mongo:/data/db \
- -v $PWD/mongo:data/configdb \
+ -v $PWD/mongo:/data/configdb \
  --network mongo \
- --network-alias boyda/mongo \
- mongo
+ --network-alias mongo \
+ boyda/mongo
 ```
 Singularity container can be build with 
 ```
@@ -18,8 +18,8 @@ singularity build omni.simg docker://boyda/omni
 and executed with
 ```
 nohub singularity run \
- -B $PWD/mongo:data/db \
- -B $PWD/mongo:data/configdb \
+ -B $PWD/mongo:/data/db \
+ -B $PWD/mongo:/data/configdb \
  --hostname mongo mongo.simg &
 ```
 After execution this container launches mongo database instance and binds it to port 27017. Sacred application may use `mongo:27017` host for logging.
