@@ -13,7 +13,7 @@ docker run -dp 27017:27017 \
 ```
 Singularity container can be build with 
 ```
-singularity build omni.simg docker://boyda/omni
+singularity build mongo.simg docker:mongo
 ```
 and executed with
 ```
